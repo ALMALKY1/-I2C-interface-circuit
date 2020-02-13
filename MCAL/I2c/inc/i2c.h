@@ -2,7 +2,7 @@
  * i2c.h
  *
  *  Created on: Feb 12, 2020
- *      Author: MELMA
+ *      Author: MOhamed ALMALKY
  */
 
 #ifndef HAL_I2C_INC_I2C_H_
@@ -14,7 +14,6 @@
 void I2C_init (void);
 void I2C_STOP(void);
 uint8_t I2C_START(void);
-
 
 
 uint8_t I2C_READ_NOT_ACK(void);

@@ -10,7 +10,7 @@
  * i2c.c
  *
  *  Created on: Feb 11, 2020
- *      Author: MELMA
+ *      Author: Mohamed  Mahmoud ALMALKY
  */
 #include <avr/io.h>
 
@@ -53,17 +53,17 @@ uint8_t I2C_START(void)
 
 
 
-void I2C_WRITE_address(uint8_t data)
+void I2C_WRITE_address(uint8_t adress )
 {
-    TWDR=data;    // Address and read instruction
+    TWDR=adress + I2C_Write_MODE;    // Address and write instruction
     TWCR=(1<<TWINT)|(1<<TWEN);    // Clear TWI interrupt flag,Enable TWI
     while (!(TWCR & (1<<TWINT))); // Wait till complete TWDR byte received
     while((TWSR & 0xF8)!= TW_MT_SLA_ACK);  // Check for the acknoledgement
 }
 
-void I2C_read_address(uint8_t data)
+void I2C_read_address(uint8_t adress)
 {
-    TWDR=data;    // Address and read instruction
+    TWDR=adress+I2C_READ_MODE;    // Address and read instruction
     TWCR=(1<<TWINT)|(1<<TWEN);    // Clear TWI interrupt flag,Enable TWI
     while (!(TWCR & (1<<TWINT))); // Wait till complete TWDR byte received
     while((TWSR & 0xF8)!= 0x40);  // Check for the acknoledgement
@@ -128,20 +128,18 @@ uint8_t I2C_SLAVE_Init(uint8_t adresse){
 
 uint8_t I2C_Slave_listen_READ(){
 
-	while(1){
+
 		uint8_t status ;
 		while(!(TWCR&(1<<TWINT)));
 		status=TWSR&0xF8;
-		 while(status!= 0x60)  // Loop till correct acknoledgement have been received
-		    {
-			 return 1 ;
+		 while(status!= 0x60) // Loop till correct acknoledgement have been received
+		 {
 		        // Get acknowlegement, Enable TWI, Clear TWI interrupt flag
 		        TWCR=(1<<TWEA)|(1<<TWEN)|(1<<TWINT);
 		        while (!(TWCR & (1<<TWINT)));  // Wait for TWINT flag
-		    }
-		 continue ;
-	}
-	return 0 ;
+		        return 0;
+		 }
+		 return 1 ;
 }
 
 
@@ -152,6 +150,7 @@ int8_t I2C_SLAVE_READ(void)
 	    while (!(TWCR & (1<<TWINT)));    // Wait for TWINT flag
 	    while((TWSR & 0xF8)!=0x80);        // Wait for acknowledgement
 	   return TWDR;                    // Get value from TWDR
+
 }
 
 
@@ -160,8 +159,6 @@ int8_t I2C_SLAVE_READ(void)
 
 uint8_t I2C_Slave_listen_WRITE(){
 
-	while(1){
-		return 1 ;
 		uint8_t status ;
 		while(!(TWCR&(1<<TWINT)));
 		 return 1 ;
@@ -171,11 +168,10 @@ uint8_t I2C_Slave_listen_WRITE(){
 		        // Get acknowlegement, Enable TWI, Clear TWI interrupt flag
 		        TWCR=(1<<TWEA)|(1<<TWEN)|(1<<TWINT);
 		        while (!(TWCR & (1<<TWINT)));  // Wait for TWINT flag
+		        return 0;
 		    }
 
-	continue;
-	}
-		 return 0 ;
+		 return 1 ;
 
 	}
 
@@ -225,8 +221,10 @@ uint8_t I2C_TRANSMATE(uint8_t address , uint8_t*data , uint16_t length)
 
 	for(uint8_t i ; i<length ; i++)
 	{
-		if(I2C_WRITE(data[length]))
-			return 1 ;
+		if(I2C_MASTER_WRITE(data[length])){
+
+		return 1 ;
+		}
 	}
 
 	I2C_STOP();
@@ -246,11 +244,22 @@ uint8_t i2c_Recevie(uint8_t address , uint8_t*data ,uint8_t length)
 				return 0 ;
 		}
 
-void I2C_STOP(void)
-{
-	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
-	  while(TWCR&(1<<TWSTO));
+
+void I2C_STOP(void){
+		TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
+		while(!(TWCR & (1 << TWINT)));
 }
+
+
+void I2C_repeated_start(void)
+{
+// Clear TWI interrupt flag, Put start condition on SDA, Enable TWI
+TWCR= (1<<TWINT)|(1<<TWSTA)|(1<<TWEN);
+while(!(TWCR & (1<<TWINT))); // wait till restart condition is transmitted
+while((TWSR & 0xF8)!= 0x10); // Check for the acknoledgement
+}
+
+
 
 
 

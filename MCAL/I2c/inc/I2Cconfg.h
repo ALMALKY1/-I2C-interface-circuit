@@ -2,14 +2,11 @@
  * I2Cconfg.h
  *
  *  Created on: Feb 11, 2020
- *      Author: MELMA
+ *      Author: Mohamed ALMALKY
  */
 
 #ifndef HAL_I2C_INC_I2CCONFG_H_
 #define HAL_I2C_INC_I2CCONFG_H_
-
-
-
 
 
 
@@ -31,6 +28,12 @@
 #define TW_MR_SLA_NOT_ACK 0x48
 #define TW_MR_DATA_ACK 0x50
 #define TW_MR_DATA_NOT_ACK 0x58
+
+
+#define I2C_read 1
+#define I2C_write 0
+
+
 
 
 #endif /* HAL_I2C_INC_I2CCONFG_H_ */

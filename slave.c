@@ -2,7 +2,7 @@
  * slave.c
  *
  *  Created on: Feb 12, 2020
- *      Author: Almalky
+ *      Author: Mohamed Almalky
  */
 
 #include "avr/delay.h"

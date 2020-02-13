@@ -43,8 +43,8 @@ void main (void)
 		I2C_MASTER_WRITE((uint8_t)u32Temperature);
 		_delay_ms(50);
 		I2C_STOP();
-
-
 	}
+
+
 }
 
