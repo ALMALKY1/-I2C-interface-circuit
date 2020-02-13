@@ -1,9 +1,3 @@
-/*
- * i2v.c
- *
- *  Created on: Feb 12, 2020
- *      Author: MELMA
- */
 
 /*
 
